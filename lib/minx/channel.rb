@@ -16,7 +16,18 @@ module Minx
     # @param message the message to be transmitted
     # @return [nil]
     def send(message)
-      @readers.shift.resume(message)
+      if @readers.empty?
+        @writers << Fiber.current
+
+        # Yield control
+        Fiber.yield
+
+        # Yield a message back to a reader.
+        Fiber.yield(message)
+      else
+        @readers.shift.resume(message)
+      end
+
       return nil
     end
 
@@ -27,8 +38,12 @@ module Minx
     #
     # @return a message
     def receive
-      @readers << Fiber.current
-      Fiber.yield
+      if @writers.empty?
+        @readers << Fiber.current
+        Fiber.yield
+      else
+        @writers.shift.resume
+      end
     end
   end
 end
