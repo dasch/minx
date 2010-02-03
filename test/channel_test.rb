@@ -32,14 +32,14 @@ class ChannelTest < Test::Unit::TestCase
     end
 
     should "iterate over messages on #each" do
-      Minx::Process.new { [:foo, :bar, :baz].each {|msg| @channel.send(msg) } }.spawn
+      Minx.spawn { [:foo, :bar, :baz].each {|msg| @channel.send(msg) } }
 
       values = [:foo, :bar, :baz]
-      Minx::Process.new do
+      Minx.spawn do
         @channel.each do |message|
           assert_equal values.shift, message
         end
-      end.spawn
+      end
     end
   end
 end
