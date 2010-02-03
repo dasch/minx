@@ -45,5 +45,17 @@ module Minx
         @writers.shift.resume
       end
     end
+
+    # Enumerate over the messages sent to the channel.
+    #
+    # @example Iterating over channel messages
+    #   chan.each do |message|
+    #     puts "Got #{message}!"
+    #   end
+    #
+    # @yield [message]
+    def each
+      yield receive while true
+    end
   end
 end

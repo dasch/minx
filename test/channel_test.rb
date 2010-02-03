@@ -30,5 +30,16 @@ class ChannelTest < Test::Unit::TestCase
         assert_equal :foo, @data.first
       end
     end
+
+    should "iterate over messages on #each" do
+      Minx::Process.new { [:foo, :bar, :baz].each {|msg| @channel.send(msg) } }.spawn
+
+      values = [:foo, :bar, :baz]
+      Minx::Process.new do
+        @channel.each do |message|
+          assert_equal values.shift, message
+        end
+      end.spawn
+    end
   end
 end
