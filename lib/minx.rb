@@ -11,4 +11,9 @@ module Minx
   def self.spawn(&block)
     Process.new(&block).spawn
   end
+
+  # Yields control.
+  def self.yield(*args)
+    Fiber.yield(*args)
+  end
 end

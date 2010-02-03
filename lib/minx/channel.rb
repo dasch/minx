@@ -20,10 +20,10 @@ module Minx
         @writers << Fiber.current
 
         # Yield control
-        Fiber.yield
+        Minx.yield
 
         # Yield a message back to a reader.
-        Fiber.yield(message)
+        Minx.yield(message)
       else
         @readers.shift.resume(message)
       end
@@ -40,7 +40,7 @@ module Minx
     def receive
       if @writers.empty?
         @readers << Fiber.current
-        Fiber.yield
+        Minx.yield
       else
         @writers.shift.resume
       end
