@@ -12,7 +12,9 @@ module Minx
     Process.new(&block).spawn
   end
 
-  # Yields control.
+  # Yield control to another process.
+  #
+  # The calling process will be resumed at a later point.
   def self.yield(*args)
     Fiber.yield(*args)
   end
