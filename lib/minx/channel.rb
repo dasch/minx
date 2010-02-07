@@ -31,6 +31,8 @@ module Minx
       return nil
     end
 
+    alias :<< :send
+
     # Read a message off the channel.
     #
     # If no messages have been written to the channel, the calling process will

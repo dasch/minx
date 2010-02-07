@@ -31,6 +31,11 @@ class ChannelTest < Test::Unit::TestCase
       end
     end
 
+    should "send a message with #<<" do
+      Minx.spawn { @channel << :bar }
+      assert_equal :bar, @channel.receive
+    end
+
     should "iterate over messages on #each" do
       Minx.spawn { [:foo, :bar, :baz].each {|msg| @channel.send(msg) } }
 
