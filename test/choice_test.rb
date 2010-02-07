@@ -4,8 +4,8 @@ require 'helper'
 class ChoiceTest < Test::Unit::TestCase
   context "A simple choice between two channels" do
     setup do
-      @chan1 = Minx::Channel.new
-      @chan2 = Minx::Channel.new
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
     end
 
     context "with a single writer" do

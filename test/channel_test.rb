@@ -3,7 +3,7 @@ require 'helper'
 class ChannelTest < Test::Unit::TestCase
   context "A Channel" do
     setup do
-      @channel = Minx::Channel.new
+      @channel = Minx.channel
       @data = []
       @p1 = Minx::Process.new { @channel.send(:foo) }
       @p2 = Minx::Process.new { @data << @channel.receive }

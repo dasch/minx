@@ -12,6 +12,11 @@ module Minx
     Process.new(&block).spawn
   end
 
+  # Create a new channel.
+  def self.channel
+    Channel.new
+  end
+
   # Yield control to another process.
   #
   # The calling process will be resumed at a later point.
