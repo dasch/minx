@@ -37,6 +37,12 @@ this would be useful is a simple network server:
 In the near future, evented IO will be implemented, allowing for highly
 performant network and file applications.
 
+
+== Documentation
+
+See http://yardoc.org/docs/dasch-minx/file:README.rdoc for full documentation.
+
+
 == Copyright
 
 Copyright (c) 2010 Daniel Schierbeck. See LICENSE for details.
