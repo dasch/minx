@@ -16,4 +16,10 @@ module Minx
   def self.yield(*args)
     Fiber.yield(*args)
   end
+
+  def self.select(*choices)
+    choices.each do |choice|
+      return choice.receive if choice.readable?
+    end
+  end
 end
