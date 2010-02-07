@@ -13,5 +13,12 @@ module Minx
     def spawn
       @fiber.resume
     end
+
+    # Resume the process.
+    #
+    # This yields execution to the process.
+    def resume
+      @fiber.resume
+    end
   end
 end
