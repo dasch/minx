@@ -33,6 +33,8 @@ class ProcessTest < Test::Unit::TestCase
         Minx.yield
       end
 
+      Minx.join(@process)
+
       assert_equal 42, @value
     end
   end

@@ -19,6 +19,15 @@ module Minx
     Fiber.yield(*args)
   end
 
+  # Wait for the processes to yield execution.
+  def self.join(*processes)
+    processes.each do |process|
+      process.resume
+    end
+
+    return nil
+  end
+
   # Select from a list of channels.
   #
   # The channels will be enumerated in order; the first one carrying a message
