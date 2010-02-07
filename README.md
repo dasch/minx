@@ -24,17 +24,15 @@ or writing to a channel, a process yields execution -- and thus blocks until
 another process also participates in the communication. An example of when
 this would be useful is a simple network server:
 
-    def worker(requests)
-      Minx.spawn do
-        requests.each {|request| handle_request(request) }
-      end
-    end
-
     # Create a channel for the incoming requests.
     requests = Minx.channel
 
     # Spawn 10 workers.
-    10.times { worker(requests) }
+    10.times do
+      Minx.spawn do
+        requests.each {|request| handle_request(request) }
+      end
+    end
 
 In the near future, evented IO will be implemented, allowing for highly
 performant network and file applications.
