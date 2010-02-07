@@ -45,17 +45,26 @@ module Minx
   # will be picked, and the message will be returned.
   #
   # If none of the channels are readable, the calling process will yield until
-  # a channel is written to.
+  # a channel is written to, unless <code>:skip => true</code> is passed as
+  # an option, in which case the call will just return +nil+.
+  #
+  # @example Non-blocking select
+  #   Minx.select(chan1, chan2, :skip => true)
   #
   # @param choices [Channel] the channels to be selected among
   # @return the first message received from any of the channels
   def self.select(*choices)
+    options = choices.last.is_a?(Hash) ? choices.pop : {}
+
     # If a choice is readable, just receive from that one.
     choices.each do |choice|
       return choice.receive if choice.readable?
     end
 
-    # ... otherwise, wait for one to become readable.
+    # Return immediately if :skip => true
+    return if options[:skip]
+
+    # ... otherwise, wait for a channel to become readable.
     choices.each do |choice|
       choice.receive(:async => true)
     end

@@ -55,5 +55,15 @@ class ChoiceTest < Test::Unit::TestCase
         assert_equal 666, @value
       end
     end
+
+    context "with :skip => true" do
+      setup do
+        Minx.spawn { @value = Minx.select(@chan1, @chan2, :skip => true) }
+      end
+
+      should "not block" do
+        assert_nil @value
+      end
+    end
   end
 end
