@@ -18,8 +18,15 @@ module Minx
   end
 
   def self.select(*choices)
+    # If a choice is readable, just receive from that one.
     choices.each do |choice|
       return choice.receive if choice.readable?
     end
+
+    # ... otherwise, wait for one to become readable.
+    choices.each do |choice|
+      choice.receive(:async => true)
+    end
+    Minx.yield
   end
 end

@@ -34,13 +34,17 @@ module Minx
     # Read a message off the channel.
     #
     # If no messages have been written to the channel, the calling process will
-    # block, only resuming when a write occurs.
+    # block, only resuming when a write occurs. This behavior can be suppressed
+    # by calling +receive+ with <code>:async => true</code>, in which case the
+    # call will return immediately; the next time the calling process yields,
+    # it may be resumed with a message from the channel.
     #
+    # @option options [Boolean] :async (false) whether or not to block
     # @return a message
-    def receive
+    def receive(options = {})
       if @writers.empty?
         @readers << Fiber.current
-        Minx.yield
+        Minx.yield unless options[:async]
       else
         @writers.shift.resume
       end
