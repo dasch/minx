@@ -8,11 +8,15 @@ require 'minx/process'
 
 module Minx
   # Spawn a new process.
+  #
+  # @return [Process] a new process
   def self.spawn(&block)
     Process.new(&block).spawn
   end
 
   # Create a new channel.
+  #
+  # @return [Channel] a new channel
   def self.channel
     Channel.new
   end
@@ -25,6 +29,8 @@ module Minx
   end
 
   # Wait for the processes to yield execution.
+  #
+  # @return [nil]
   def self.join(*processes)
     processes.each do |process|
       process.resume
