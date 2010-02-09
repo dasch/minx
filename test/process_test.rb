@@ -1,7 +1,7 @@
 require 'helper'
 
 class ProcessTest < Test::Unit::TestCase
-  should "Raise ArgumentError if no block is given" do
+  should "raise ArgumentError if no block is given" do
     assert_raise(ArgumentError) { Minx::Process.new }
   end
 
