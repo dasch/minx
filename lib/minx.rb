@@ -1,4 +1,8 @@
 
+unless defined?(Fiber)
+  raise "You need to use Ruby 1.9 in order to use Minx"
+end
+
 require 'fiber'
 
 Minx = Module.new
