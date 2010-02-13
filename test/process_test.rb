@@ -34,4 +34,20 @@ class ProcessTest < Test::Unit::TestCase
       assert_equal 42, @value
     end
   end
+
+  context "Joining a process" do
+    setup do
+      @process = Minx::Process.new do
+        2.times { Minx.yield }
+        @value = 42
+      end
+    end
+
+    should "wait for that process to finish" do
+      @process.spawn
+      Minx.join(@process)
+
+      assert_equal 42, @value
+    end
+  end
 end

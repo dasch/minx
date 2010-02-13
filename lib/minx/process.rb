@@ -20,5 +20,12 @@ module Minx
     def resume
       @fiber.resume
     end
+
+    # Whether the process has finished execution.
+    #
+    # @return true if the process is no longer active
+    def finished?
+      !@fiber.alive?
+    end
   end
 end
