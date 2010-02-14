@@ -37,7 +37,7 @@ module Minx
   # @return [nil]
   def self.join(*processes)
     processes.each do |process|
-      process.resume unless process.finished?
+      process.__resume__ unless process.finished?
     end until processes.all? {|p| p.finished? }
 
     return nil

@@ -47,7 +47,7 @@ begin
   YARD::Rake::YardocTask.new do |t|
     extra_files = %w(LICENSE)
     t.files = ['lib/**/*.rb']
-    t.options = ["--files=#{extra_files.join(',')}"]
+    t.options = ["--files=#{extra_files.join(',')}", "--no-private"]
   end
 rescue LoadError
   task :yard do

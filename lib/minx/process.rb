@@ -15,15 +15,16 @@ module Minx
     #
     # @raise [ProcessError] if the process has already been spawned
     def spawn
-      resume
+      __resume__
     end
 
     # Resume the process.
     #
     # This yields execution to the process.
     #
+    # @private
     # @raise [ProcessError] if the process has finished
-    def resume
+    def __resume__
       raise ProcessError if finished?
       @fiber.resume
       self
