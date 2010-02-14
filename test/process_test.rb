@@ -50,4 +50,20 @@ class ProcessTest < Test::Unit::TestCase
       assert_equal 42, @value
     end
   end
+
+  context "Minx.spawn" do
+    should "return the spawned process" do
+      assert(Minx.spawn { 1 + 1 }.is_a?(Minx::Process))
+    end
+  end
+
+  context "Spawning a process that is finished" do
+    setup do
+      @process = Minx.spawn { "Hello, World!" }
+    end
+
+    should "raise Minx::ProcessError" do
+      assert_raise(Minx::ProcessError) { @process.spawn }
+    end
+  end
 end
