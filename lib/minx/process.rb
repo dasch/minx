@@ -31,6 +31,7 @@ module Minx
     # @see Minx.spawn
     def initialize(&block)
       raise ArgumentError unless block_given?
+
       @block = block
     end
 
@@ -44,6 +45,7 @@ module Minx
       raise ProcessError if defined?(@fiber)
 
       @fiber = Fiber.new(&@block)
+
       __resume__
     end
 
@@ -55,8 +57,10 @@ module Minx
     # @raise [ProcessError] if the process has finished
     def __resume__
       raise ProcessError if finished?
+
       @fiber.resume
-      self
+
+      return self
     end
 
     # Whether the process has finished execution.
