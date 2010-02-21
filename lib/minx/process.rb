@@ -2,6 +2,21 @@
 module Minx
   ProcessError = Class.new(Exception)
 
+  # A process is the core concurrency primitive in Minx.
+  #
+  # Processes run concurrently and independently. In order to synchronize and
+  # organize processes you need to use _channels_ -- these synchronously
+  # transmit messages between two processes, making them ideal for
+  # communication and synchronization.
+  #
+  # Oftentimes, you need not work directly with the Process objects, but
+  # can use the methods on the {Minx} module directly, such as {Minx.spawn},
+  # {Minx.yield}, and {Minx.join}.
+  #
+  # @see Channel
+  # @see Minx.spawn
+  # @see Minx.yield
+  # @see Minx.join
   class Process
     # Initialize a new process.
     #
