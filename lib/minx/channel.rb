@@ -61,6 +61,7 @@ module Minx
     #   end
     #
     # @yield [message]
+    # @return [nil]
     def each
       yield receive while true
     end
