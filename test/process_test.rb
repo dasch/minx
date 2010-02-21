@@ -66,4 +66,16 @@ class ProcessTest < Test::Unit::TestCase
       assert_raise(Minx::ProcessError) { @process.spawn }
     end
   end
+
+  context "Spawning a process twice" do
+    setup do
+      @process = Minx.spawn { Minx.yield while true }
+    end
+
+    should "raise ProcessError" do
+      assert_raise Minx::ProcessError do
+        @process.spawn
+      end
+    end
+  end
 end

@@ -16,7 +16,7 @@ module Minx
     # @see Minx.spawn
     def initialize(&block)
       raise ArgumentError unless block_given?
-      @fiber = Fiber.new { block.call }
+      @block = block
     end
 
     # Spawn the process.
@@ -26,6 +26,9 @@ module Minx
     #
     # @raise [ProcessError] if the process has already been spawned
     def spawn
+      raise ProcessError if defined?(@fiber)
+
+      @fiber = Fiber.new(&@block)
       __resume__
     end
 
