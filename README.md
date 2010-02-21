@@ -17,7 +17,7 @@ and *channels*.
     chan = Minx.channel
 
     Minx.spawn { chan.write("Hello, World!") }
-    Minx.spawn { puts chan.read("Hello, World!") }
+    Minx.spawn { puts chan.read }
 
 These primitives, although simple, are incredibly powerful when composing highly
 concurrent applications. When reading from or writing to a channel, a process
