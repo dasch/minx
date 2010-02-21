@@ -1,5 +1,7 @@
 
 module Minx
+  ChannelError = Class.new(Exception)
+
   # A Channel is used to transmit messages between processes in a synchronized
   # manner.
   class Channel
@@ -15,6 +17,7 @@ module Minx
     # along.
     #
     # @param message the message to be transmitted
+    # @raise [ChannelError] when trying to send while asynchronously reading
     # @return [nil]
     def send(message)
       if @readers.empty?
@@ -26,7 +29,12 @@ module Minx
         # Yield a message back to a reader.
         Fiber.yield(message)
       else
-        @readers.shift.resume(message)
+        reader = @readers.shift
+
+        # Can't send asynchronously to self. That would be silly.
+        raise ChannelError if reader == Fiber.current
+
+        reader.resume(message)
       end
 
       return nil

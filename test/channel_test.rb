@@ -47,4 +47,19 @@ class ChannelTest < Test::Unit::TestCase
       end
     end
   end
+
+  context "A channel" do
+    setup do
+      @chan = Minx.channel
+    end
+
+    should "not allow sending while asynchronously reading" do
+      assert_raise Minx::ChannelError do
+        Minx.spawn do
+          @chan.receive(:async => true)
+          @chan.send("foobar")
+        end
+      end
+    end
+  end
 end
