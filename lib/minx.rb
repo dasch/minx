@@ -13,7 +13,11 @@ require 'minx/process'
 module Minx
   # Spawn a new process.
   #
+  # The spawned process will start immediately, taking over execution.
+  #
   # @return [Process] a new process
+  # @raise [ArgumentError] unless a block is given
+  # @see Process#spawn
   def self.spawn(&block)
     Process.new(&block).spawn
   end
@@ -27,12 +31,26 @@ module Minx
 
   # Yield control to another process.
   #
-  # The calling process will be resumed at a later point.
+  # The current process will be resumed at a later point.
+  #
+  # @return [nil]
   def self.yield(*args)
     Fiber.yield(*args)
   end
 
-  # Wait for the processes to yield execution.
+  # Wait for the specified processes to yield execution.
+  #
+  # The current process will be resumed after all the specified processes
+  # have terminated.
+  #
+  # @example Waiting for a pair of processes
+  #   p1 = Minx.spawn { @foo = chan1.read }
+  #   p2 = Minx.spawn { @bar = chan2.read }
+  #
+  #   Minx.join(p1, p2)
+  #
+  #   # Both @foo and @bar are available now.
+  #   puts @foo, @bar
   #
   # @return [nil]
   def self.join(*processes)

@@ -19,10 +19,11 @@ and *channels*.
     Minx.spawn { chan.send("Hello, World!") }
     Minx.spawn { puts chan.receive("Hello, World!") }
 
-These primitives, although simple, are incredibly powerful. When reading from
-or writing to a channel, a process yields execution -- and thus blocks until
-another process also participates in the communication. An example of when
-this would be useful is a simple network server:
+These primitives, although simple, are incredibly powerful when composing highly
+concurrent applications. When reading from or writing to a channel, a process
+yields execution -- and thus blocks until another process also participates in
+the communication. An example of when this would be useful is a simple network
+server:
 
     # Create a channel for the incoming requests.
     requests = Minx.channel

@@ -3,6 +3,17 @@ module Minx
   ProcessError = Class.new(Exception)
 
   class Process
+    # Initialize a new process.
+    #
+    # The process is *not* spawned when instantiated; you'll need to call
+    # {#spawn} manually. Call {Minx.spawn} to immediately spawn a new process.
+    #
+    # @example Creating a new process
+    #   p = Minx::Process.new { 1 + 1 }
+    #   p.spawn
+    #
+    # @raise [ArgumentError] unless a block is given
+    # @see Minx.spawn
     def initialize(&block)
       raise ArgumentError unless block_given?
       @fiber = Fiber.new { block.call }
