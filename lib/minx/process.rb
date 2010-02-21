@@ -65,7 +65,7 @@ module Minx
 
     # Whether the process has finished execution.
     #
-    # @return true if the process is no longer active
+    # @return +true+ if the process has terminated, +false+ otherwise
     def finished?
       !@fiber.alive?
     end
