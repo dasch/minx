@@ -64,9 +64,12 @@ module Minx
       yield receive while true
     end
 
-    # Returns whether there are any processes waiting to write.
+    # Whether there are any processes waiting to write.
     #
-    # @return +true+ if you can receive a message from the channel
+    # If the channel is readable, the current process will not block when
+    # calling {#receive}.
+    #
+    # @return +true+ if you can receive a message without blocking
     def readable?
       return !@writers.empty?
     end
