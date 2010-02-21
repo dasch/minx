@@ -10,10 +10,10 @@ class ChoiceTest < Test::Unit::TestCase
 
     context "with a single writer" do
       setup do
-        Minx.spawn { @chan2.send(42) }
+        Minx.spawn { @chan2.write(42) }
       end
 
-      should "receive from the channel with a writer" do
+      should "read from the channel with a writer" do
         Minx.spawn do
           assert_equal 42, Minx.select(@chan1, @chan2)
         end
@@ -22,20 +22,20 @@ class ChoiceTest < Test::Unit::TestCase
 
     context "with writers on both channels" do
       setup do
-        Minx.spawn { @chan1.send(666) }
-        Minx.spawn { @chan2.send(42) }
+        Minx.spawn { @chan1.write(666) }
+        Minx.spawn { @chan2.write(42) }
       end
 
-      should "receive from the first channel specified" do
+      should "read from the first channel specified" do
         Minx.spawn do
           assert_equal 666, Minx.select(@chan1, @chan2)
         end
       end
 
-      should "not receive from the second channel specified" do
+      should "not read from the second channel specified" do
         Minx.spawn do
           Minx.select(@chan1, @chan2)
-          assert_equal 42, @chan2.receive
+          assert_equal 42, @chan2.read
         end
       end
     end
@@ -46,12 +46,12 @@ class ChoiceTest < Test::Unit::TestCase
       end
 
       should "block until a writer comes along" do
-        Minx.spawn { @chan1.send(42) }
+        Minx.spawn { @chan1.write(42) }
         assert_equal 42, @value
       end
 
       should "also block until the second channel gets written to" do
-        Minx.spawn { @chan2.send(666) }
+        Minx.spawn { @chan2.write(666) }
         assert_equal 666, @value
       end
     end

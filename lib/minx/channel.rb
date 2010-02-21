@@ -17,9 +17,9 @@ module Minx
     # along.
     #
     # @param message the message to be transmitted
-    # @raise [ChannelError] when trying to send while asynchronously reading
+    # @raise [ChannelError] when trying to write while asynchronously reading
     # @return [nil]
-    def send(message)
+    def write(message)
       if @readers.empty?
         @writers << Fiber.current
 
@@ -31,7 +31,7 @@ module Minx
       else
         reader = @readers.shift
 
-        # Can't send asynchronously to self. That would be silly.
+        # Can't write asynchronously to self. That would be silly.
         raise ChannelError if reader == Fiber.current
 
         reader.resume(message)
@@ -40,19 +40,19 @@ module Minx
       return nil
     end
 
-    alias :<< :send
+    alias :<< :write
 
     # Read a message off the channel.
     #
     # If no messages have been written to the channel, the calling process will
     # block, only resuming when a write occurs. This behavior can be suppressed
-    # by calling +receive+ with <code>:async => true</code>, in which case the
+    # by calling +read+ with <code>:async => true</code>, in which case the
     # call will return immediately; the next time the calling process yields,
     # it may be resumed with a message from the channel.
     #
     # @option options [Boolean] :async (false) whether or not to block
     # @return a message
-    def receive(options = {})
+    def read(options = {})
       if @writers.empty?
         @readers << Fiber.current
         Minx.yield unless options[:async]
@@ -71,15 +71,15 @@ module Minx
     # @yield [message]
     # @return [nil]
     def each
-      yield receive while true
+      yield read while true
     end
 
     # Whether there are any processes waiting to write.
     #
     # If the channel is readable, the current process will not block when
-    # calling {#receive}.
+    # calling {#read}.
     #
-    # @return +true+ if you can receive a message without blocking
+    # @return +true+ if you can read a message without blocking
     def readable?
       return !@writers.empty?
     end

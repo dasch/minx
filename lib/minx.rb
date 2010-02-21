@@ -74,13 +74,13 @@ module Minx
   #   Minx.select(chan1, chan2, :skip => true)
   #
   # @param choices [Channel] the channels to be selected among
-  # @return the first message received from any of the channels
+  # @return the first message read from any of the channels
   def self.select(*choices)
     options = choices.last.is_a?(Hash) ? choices.pop : {}
 
-    # If a choice is readable, just receive from that one.
+    # If a choice is readable, just read from that one.
     choices.each do |choice|
-      return choice.receive if choice.readable?
+      return choice.read if choice.readable?
     end
 
     # Return immediately if :skip => true
@@ -88,7 +88,7 @@ module Minx
 
     # ... otherwise, wait for a channel to become readable.
     choices.each do |choice|
-      choice.receive(:async => true)
+      choice.read(:async => true)
     end
     Minx.yield
   end

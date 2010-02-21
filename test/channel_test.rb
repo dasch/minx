@@ -5,8 +5,8 @@ class ChannelTest < Test::Unit::TestCase
     setup do
       @channel = Minx.channel
       @data = []
-      @p1 = Minx::Process.new { @channel.send(:foo) }
-      @p2 = Minx::Process.new { @data << @channel.receive }
+      @p1 = Minx::Process.new { @channel.write(:foo) }
+      @p2 = Minx::Process.new { @data << @channel.read }
     end
 
     context "with first a reader, then a writer" do
@@ -31,13 +31,13 @@ class ChannelTest < Test::Unit::TestCase
       end
     end
 
-    should "send a message with #<<" do
+    should "write a message with #<<" do
       Minx.spawn { @channel << :bar }
-      assert_equal :bar, @channel.receive
+      assert_equal :bar, @channel.read
     end
 
     should "iterate over messages on #each" do
-      Minx.spawn { [:foo, :bar, :baz].each {|msg| @channel.send(msg) } }
+      Minx.spawn { [:foo, :bar, :baz].each {|msg| @channel.write(msg) } }
 
       values = [:foo, :bar, :baz]
       Minx.spawn do
@@ -53,11 +53,11 @@ class ChannelTest < Test::Unit::TestCase
       @chan = Minx.channel
     end
 
-    should "not allow sending while asynchronously reading" do
+    should "not allow writing while asynchronously reading" do
       assert_raise Minx::ChannelError do
         Minx.spawn do
-          @chan.receive(:async => true)
-          @chan.send("foobar")
+          @chan.read(:async => true)
+          @chan.write("foobar")
         end
       end
     end
