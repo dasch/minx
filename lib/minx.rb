@@ -34,8 +34,8 @@ module Minx
   # The current process will be resumed at a later point.
   #
   # @return [nil]
-  def self.yield(*args)
-    Fiber.yield(*args)
+  def self.yield
+    Fiber.yield
   end
 
   # Wait for the specified processes to yield execution.

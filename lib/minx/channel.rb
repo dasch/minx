@@ -23,7 +23,7 @@ module Minx
         Minx.yield
 
         # Yield a message back to a reader.
-        Minx.yield(message)
+        Fiber.yield(message)
       else
         @readers.shift.resume(message)
       end
