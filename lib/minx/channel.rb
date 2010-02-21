@@ -40,7 +40,20 @@ module Minx
       return nil
     end
 
-    alias :<< :write
+    # Write a message to the channel.
+    #
+    # Exactly the same as calling {#write}, except that the channel itself
+    # is returned, allowing for chained calls, e.g.
+    #
+    #   chan << 1 << 2 << 3
+    #
+    # @see #write
+    # @param message the message to be transmitted
+    # @return [Channel] the channel
+    def << message
+      write(message)
+      return self
+    end
 
     # Read a message off the channel.
     #
