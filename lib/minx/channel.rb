@@ -3,6 +3,7 @@ module Minx
   # A Channel is used to transmit messages between processes in a synchronized
   # manner.
   class Channel
+    # Create a new channel.
     def initialize
       @readers = []
       @writers = []
