@@ -6,6 +6,9 @@ module Minx
     end
 
     def readline
+      # Yield until the IO object is ready for reading.
+      Minx.yield until select([@io])
+
       @io.readline
     end
   end

@@ -15,4 +15,15 @@ class FileChannelTest < Test::Unit::TestCase
       assert_equal "baz\n", @chan.readline
     end
   end
+
+  context "A blocking IO operation" do
+    setup do
+      @io = Minx::IO.new(File.open('/dev/zero'))
+    end
+
+    should "yield to another process" do
+      Minx.spawn { @io.readline; assert false }
+      assert true
+    end
+  end
 end
