@@ -11,6 +11,25 @@ require 'minx/channel'
 require 'minx/process'
 
 module Minx
+  # Set whether or not to enable debugging output.
+  #
+  # Debugging information will be written to <code>$stderr</code>.
+  #
+  # @return [nil]
+  def self.debug=(debug)
+    @debug = debug
+
+    return nil
+  end
+
+  # Whether or not debugging is enabled.
+  #
+  # @return [Boolean] whether or not debugging is enabled
+  # @see debug=
+  def self.debug?
+    @debug
+  end
+
   # Spawn a new process.
   #
   # The spawned process will start immediately, taking over execution.
