@@ -7,29 +7,24 @@ require 'socket'
 
 include ::Socket::Constants
 
-sockaddr = Socket.sockaddr_in(80, 'www.eb.dk')
-
 Minx.debug = true
 
 p = Minx.spawn do
-  socket = Minx::Socket.new(AF_INET, SOCK_STREAM, 0)
+  socket = Socket.new(AF_INET, SOCK_STREAM, 0)
+
+  channel = Minx::SocketChannel.new(socket)
 
   puts "Connecting..."
-  socket.connect(sockaddr)
+  channel.connect('www.eb.dk', :port => 80)
 
   puts "Writing..."
-  str = 'GET / HTTP/1.0\r\n\r\n' + "XXX" * 5000
-
-  written = 0
-  until written == str.length
-    written += socket.write(str[written..-1])
-    puts "Wrote #{written} bytes"
-  end
+  channel.write('GET / HTTP/1.0\r\n\r\n')
 
   puts "Reading..."
-  puts socket.read(1024)
+  channel.each {|line| puts line }
 
   puts "Done."
+  channel.disconnect
 end
 
 Minx.join(p)
