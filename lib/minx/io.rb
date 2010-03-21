@@ -13,9 +13,14 @@ module Minx
       @io.write(str)
     end
 
-    def read(buffer_length)
-      @io.read_nonblock(buffer_length)
-    rescue Errno::EAGAIN
+    # Read at most +buffer_length+ bytes from the IO object.
+    #
+    # @param [Integer] buffer_length max number of bytes to read
+    # @param [String] buffer buffer string
+    # @return [String] the content that was read
+    def read(buffer_length, buffer = nil)
+      @io.read_nonblock(buffer_length, buffer)
+    rescue Errno::EAGAIN, Errno::EWOULDBLOCK, Errno::EINTR
       Minx.yield
       retry
     end
