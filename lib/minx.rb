@@ -57,7 +57,7 @@ module Minx
     Fiber.yield
   end
 
-  # Wait for the specified processes to yield execution.
+  # Wait for the specified processes to finish.
   #
   # The current process will be resumed after all the specified processes
   # have terminated.
