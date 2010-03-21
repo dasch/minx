@@ -13,8 +13,11 @@ module Minx
       @io.write(str)
     end
 
-    def read
-      @io.read
+    def read(buffer_length)
+      @io.read_nonblock(buffer_length)
+    rescue Errno::EAGAIN
+      Minx.yield
+      retry
     end
   end
 
