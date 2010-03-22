@@ -18,6 +18,8 @@ module Minx
   # @see Minx.yield
   # @see Minx.join
   class Process
+    attr_writer :blocked
+
     # Initialize a new process.
     #
     # The process is *not* spawned when instantiated; you'll need to call
@@ -59,6 +61,7 @@ module Minx
       raise ProcessError if finished?
 
       $stderr.puts "[#{@fiber}] Resuming" if Minx.debug?
+      Process.current = self
       @fiber.resume
 
       return self
@@ -69,6 +72,16 @@ module Minx
     # @return +true+ if the process has terminated, +false+ otherwise
     def finished?
       !@fiber.alive?
+    end
+
+    # Whether the process is blocked.
+    def blocked?
+      @blocked
+    end
+
+    class << self
+      # The currently running process.
+      attr_accessor :current
     end
   end
 end

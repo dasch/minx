@@ -73,9 +73,18 @@ module Minx
   #
   # @return [nil]
   def self.join(*processes)
-    processes.each do |process|
-      process.__resume__ unless process.finished?
-    end until processes.all? {|p| p.finished? }
+    until processes.empty?
+      # Purge finished processes.
+      processes.delete_if {|p| p.finished? }
+
+      # Resume all non-blocked processes.
+      active = processes.inject(0) do |count, process|
+        process.__resume__ unless process.blocked?
+        count + 1
+      end
+
+      Minx.yield rescue nil
+    end
 
     return nil
   end
