@@ -57,6 +57,13 @@ module Minx
     Fiber.yield
   end
 
+  def self.block
+    Process.current.blocked = true
+    Fiber.yield
+  ensure
+    Process.current.blocked = false
+  end
+
   # Wait for the specified processes to finish.
   #
   # The current process will be resumed after all the specified processes

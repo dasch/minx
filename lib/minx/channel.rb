@@ -22,12 +22,9 @@ module Minx
     def write(message)
       if @readers.empty?
         @writers << Fiber.current
-        Process.current.blocked = true
 
         # Yield control
-        Minx.yield
-
-        Process.current.blocked = false
+        Minx.block
 
         # Yield a message back to a reader.
         Fiber.yield(message)
@@ -72,13 +69,10 @@ module Minx
       if @writers.empty?
         @readers << Fiber.current
 
-        Process.current.blocked = true
-        Minx.yield unless options[:async]
+        Minx.block unless options[:async]
       else
         @writers.shift.resume
       end
-    ensure
-        Process.current.blocked = false
     end
 
     # Enumerate over the messages sent to the channel.
