@@ -1,8 +1,6 @@
 require 'helper'
 require 'minx/io'
 
-FIXTURE_PATH = File.join(File.dirname(__FILE__), 'fixtures/data')
-
 class FileChannelTest < Test::Unit::TestCase
   context "A File channel" do
     setup do
