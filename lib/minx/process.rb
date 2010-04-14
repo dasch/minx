@@ -60,7 +60,7 @@ module Minx
     def __resume__
       raise ProcessError if finished?
 
-      $stderr.puts "[#{@fiber}] Resuming" if Minx.debug?
+      $stderr.puts "[#{@fiber.object_id}] Resuming" if Minx.debug?
       Process.current = self
       @fiber.resume
 
