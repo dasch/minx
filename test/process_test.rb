@@ -103,4 +103,12 @@ class ProcessTest < Test::Unit::TestCase
       chan.write(:foo)
     end
   end
+
+  context "A blocked child process" do
+    should "not block the root process" do
+      c = Minx.channel
+      Minx.spawn { c.read }
+      assert true
+    end
+  end
 end
