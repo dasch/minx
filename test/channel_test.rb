@@ -69,4 +69,29 @@ class ChannelTest < Test::Unit::TestCase
       end
     end
   end
+
+  context "Forwarding between two channels" do
+    should_eventually "not block" do
+      input = Minx.channel
+      output = Minx.channel
+
+      p1 = Minx.spawn do
+        input.each do |message|
+          output.write(message)
+        end
+      end
+
+      p2 = Minx.spawn do
+        input << 1 << 2 << 3
+      end
+
+      p3 = Minx.spawn do
+        assert_equal 1, output.read
+        assert_equal 2, output.read
+        assert_equal 3, output.read
+      end
+
+      Minx.join(p2, p3)
+    end
+  end
 end
