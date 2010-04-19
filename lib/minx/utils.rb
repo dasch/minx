@@ -28,5 +28,19 @@ module Minx
       end
     end
 
+    def filter(input, output)
+      unless block_given?
+        raise ArgumentError.new("Please provide a block argument")
+      end
+
+      Minx.spawn do
+        input.each do |message|
+          if yield message
+            output.write(message)
+          end
+        end
+      end
+    end
+
   end
 end
