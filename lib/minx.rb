@@ -55,6 +55,8 @@ module Minx
   # @return [nil]
   def self.yield
     Fiber.yield
+  rescue FiberError => error
+    raise ProcessError.new(error)
   end
 
   def self.block
@@ -90,7 +92,7 @@ module Minx
         count + 1
       end
 
-      Minx.yield rescue nil
+      Fiber.yield rescue nil
     end
 
     return nil

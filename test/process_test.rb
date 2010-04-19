@@ -111,4 +111,12 @@ class ProcessTest < Test::Unit::TestCase
       assert true
     end
   end
+
+  context "Yielding from the root process" do
+    should "raise ProcessError" do
+      assert_raise(Minx::ProcessError) do
+        Minx.yield
+      end
+    end
+  end
 end
