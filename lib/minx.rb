@@ -61,7 +61,7 @@ module Minx
 
   def self.block
     Process.current.blocked = true
-    Fiber.yield
+    Minx.yield
   ensure
     Process.current.blocked = false
   end
