@@ -87,9 +87,8 @@ module Minx
       processes.delete_if {|p| p.finished? }
 
       # Resume all non-blocked processes.
-      active = processes.inject(0) do |count, process|
+      processes.each do |process|
         process.__resume__ unless process.blocked?
-        count + 1
       end
 
       Fiber.yield rescue nil
