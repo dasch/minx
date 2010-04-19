@@ -53,7 +53,7 @@ class ChannelTest < Test::Unit::TestCase
       @chan = Minx.channel
     end
 
-    should "return allow chained writing using #<<" do
+    should "allow chained writing using #<<" do
       p1 = Minx.spawn { 1.upto(3) {|i| assert_equal(i, @chan.read) } }
       p2 = Minx.spawn { @chan << 1 << 2 << 3 }
 
