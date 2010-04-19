@@ -71,7 +71,15 @@ module Minx
 
         Minx.block unless options[:async]
       else
-        @writers.shift.resume
+        writer = @writers.shift
+
+        # Save the written message.
+        message = writer.resume
+
+        # Make sure the writer doesn't disappear.
+        writer.resume
+
+        return message
       end
     end
 

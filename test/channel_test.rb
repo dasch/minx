@@ -71,7 +71,7 @@ class ChannelTest < Test::Unit::TestCase
   end
 
   context "Forwarding between two channels" do
-    should_eventually "not block" do
+    should "not block" do
       input = Minx.channel
       output = Minx.channel
 
