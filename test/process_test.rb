@@ -35,6 +35,13 @@ class ProcessTest < Test::Unit::TestCase
     end
   end
 
+  context "Calling Minx.yield from a process" do
+    should "return nil when resumed" do
+      p = Minx.spawn { assert_nil(Minx.yield) }
+      Minx.join(p)
+    end
+  end
+
   context "Joining a process" do
     setup do
       @process = Minx::Process.new do
