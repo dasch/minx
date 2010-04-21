@@ -24,7 +24,7 @@ module Minx
         @writers << Fiber.current
 
         # Yield control
-        Minx.block
+        Fiber.yield
 
         # Yield a message back to a reader.
         Fiber.yield(message)
