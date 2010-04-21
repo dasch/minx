@@ -11,9 +11,14 @@ require 'minx/channel'
 require 'minx/process'
 
 module Minx
+  # The root fiber.
+  #
+  # @private
   ROOT = Fiber.current
 
   # Whether this is the root process.
+  #
+  # @private
   def self.root?
     ROOT == Fiber.current
   end
@@ -64,7 +69,12 @@ module Minx
     Fiber.yield unless Minx.root?
   end
 
-  def self.block
+  # Yield control to another process, and block attempts to resume.
+  #
+  # Only allows direct Fiber API to resume the process.
+  #
+  # @private
+  def self.__block__
     Process.current.blocked = true
     Minx.yield
   ensure

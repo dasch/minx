@@ -69,7 +69,7 @@ module Minx
       if @writers.empty?
         @readers << Fiber.current
 
-        Minx.block unless options[:async]
+        Minx.__block__ unless options[:async]
       else
         writer = @writers.shift
 
