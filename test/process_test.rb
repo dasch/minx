@@ -120,10 +120,8 @@ class ProcessTest < Test::Unit::TestCase
   end
 
   context "Yielding from the root process" do
-    should "raise ProcessError" do
-      assert_raise(Minx::ProcessError) do
-        Minx.yield
-      end
+    should "do nothing" do
+      Minx.yield
     end
   end
 end

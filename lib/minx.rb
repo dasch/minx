@@ -11,6 +11,13 @@ require 'minx/channel'
 require 'minx/process'
 
 module Minx
+  ROOT = Fiber.current
+
+  # Whether this is the root process.
+  def self.root?
+    ROOT == Fiber.current
+  end
+
   # Set whether or not to enable debugging output.
   #
   # Debugging information will be written to <code>$stderr</code>.
@@ -54,9 +61,7 @@ module Minx
   #
   # @return [nil]
   def self.yield
-    Fiber.yield
-  rescue FiberError => error
-    raise ProcessError.new(error)
+    Fiber.yield unless Minx.root?
   end
 
   def self.block
@@ -91,7 +96,7 @@ module Minx
         process.__resume__ unless process.blocked?
       end
 
-      Fiber.yield rescue nil
+      Fiber.yield unless Minx.root?
     end
 
     return nil
