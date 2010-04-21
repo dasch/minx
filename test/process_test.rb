@@ -86,15 +86,23 @@ class ProcessTest < Test::Unit::TestCase
     end
   end
 
-  context "Nested processes" do
+  context "A blocked child process" do
     should "not block main process" do
-      chan = Minx.channel
-      outer = Minx.spawn do
-        inner = Minx.spawn do
-          chan.read
+      chan1 = Minx.channel
+      chan2 = Minx.channel
+
+      Minx.spawn do
+        p1 = Minx.spawn do
+          chan1.read
           flunk "expected to block, but was resumed"
         end
-        Minx.join(inner)
+
+        p2 = Minx.spawn do
+          chan2.write(:foo)
+          flunk "expected to block, but was resumed"
+        end
+
+        Minx.join(p1, p2)
       end
     end
 
