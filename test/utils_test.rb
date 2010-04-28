@@ -33,8 +33,6 @@ class UtilitiesTest < Test::Unit::TestCase
       p1 = Minx.spawn do
         @chan1 << 7 << 4 << 18
       end
-
-      Minx.join(p1, p2)
     end
   end
 end

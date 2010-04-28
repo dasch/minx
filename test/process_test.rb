@@ -29,7 +29,6 @@ class ProcessTest < Test::Unit::TestCase
 
     should "be rescheduled and resumed" do
       @process.spawn
-      Minx.join(@process)
 
       assert_equal 42, @value
     end
@@ -38,23 +37,6 @@ class ProcessTest < Test::Unit::TestCase
   context "Calling Minx.yield from a process" do
     should "return nil when resumed" do
       p = Minx.spawn { assert_nil(Minx.yield) }
-      Minx.join(p)
-    end
-  end
-
-  context "Joining a process" do
-    setup do
-      @process = Minx::Process.new do
-        2.times { Minx.yield }
-        @value = 42
-      end
-    end
-
-    should "wait for that process to finish" do
-      @process.spawn
-      Minx.join(@process)
-
-      assert_equal 42, @value
     end
   end
 
@@ -93,27 +75,24 @@ class ProcessTest < Test::Unit::TestCase
 
       Minx.spawn do
         p1 = Minx.spawn do
-          chan1.read
-          flunk "expected to block, but was resumed"
+          val = chan1.read
+          flunk "expected to block, but was resumed with value #{val.inspect}"
         end
 
         p2 = Minx.spawn do
           chan2.write(:foo)
           flunk "expected to block, but was resumed"
         end
-
-        Minx.join(p1, p2)
       end
     end
 
     should "be resumed from main process" do
       chan = Minx.channel
-      outer = Minx.spawn do
-        inner = Minx.spawn do
+      Minx.spawn do
+        Minx.spawn do
           Minx.yield
           assert_equal :foo, chan.read
         end
-        Minx.join(inner)
       end
       chan.write(:foo)
     end

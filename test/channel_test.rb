@@ -56,8 +56,6 @@ class ChannelTest < Test::Unit::TestCase
     should "allow chained writing using #<<" do
       p1 = Minx.spawn { 1.upto(3) {|i| assert_equal(i, @chan.read) } }
       p2 = Minx.spawn { @chan << 1 << 2 << 3 }
-
-      Minx.join(p1, p2)
     end
 
     should "not allow writing while asynchronously reading" do
@@ -90,8 +88,6 @@ class ChannelTest < Test::Unit::TestCase
         assert_equal 2, output.read
         assert_equal 3, output.read
       end
-
-      Minx.join(p2, p3)
     end
   end
 end

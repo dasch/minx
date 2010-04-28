@@ -9,12 +9,14 @@ Minx = Module.new
 
 require 'minx/channel'
 require 'minx/process'
+require 'minx/scheduler'
 
 module Minx
   # The root fiber.
   #
   # @private
   ROOT = Fiber.current
+  SCHEDULER = Scheduler.new
 
   # Whether this is the root process.
   #
@@ -66,19 +68,7 @@ module Minx
   #
   # @return [nil]
   def self.yield
-    Fiber.yield unless Minx.root?
-  end
-
-  # Yield control to another process, and block attempts to resume.
-  #
-  # Only allows direct Fiber API to resume the process.
-  #
-  # @private
-  def self.__block__
-    Process.current.blocked = true
-    Minx.yield
-  ensure
-    Process.current.blocked = false
+    SCHEDULER.yield
   end
 
   # Wait for the specified processes to finish.
@@ -96,14 +86,14 @@ module Minx
   #   puts @foo, @bar
   #
   # @return [nil]
-  def self.join(*processes)
+  def self._join(*processes)
     until processes.empty?
       # Purge finished processes.
       processes.delete_if {|p| p.finished? }
 
       # Resume all non-blocked processes.
       processes.each do |process|
-        process.__resume__ unless process.blocked?
+        process.__resume__
       end
 
       Fiber.yield unless Minx.root?
@@ -141,6 +131,7 @@ module Minx
     choices.each do |choice|
       choice.read(:async => true)
     end
-    Minx.yield
+
+    Fiber.yield
   end
 end
