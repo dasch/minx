@@ -86,20 +86,8 @@ module Minx
   #   puts @foo, @bar
   #
   # @return [nil]
-  def self._join(*processes)
-    until processes.empty?
-      # Purge finished processes.
-      processes.delete_if {|p| p.finished? }
-
-      # Resume all non-blocked processes.
-      processes.each do |process|
-        process.__resume__
-      end
-
-      Fiber.yield unless Minx.root?
-    end
-
-    return nil
+  def self.join(*processes)
+    Minx.yield until processes.all? {|p| p.finished? }
   end
 
   # Select from a list of channels.

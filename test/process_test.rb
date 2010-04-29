@@ -30,6 +30,8 @@ class ProcessTest < Test::Unit::TestCase
     should "be rescheduled and resumed" do
       @process.spawn
 
+      Minx.join(@process)
+
       assert_equal 42, @value
     end
   end
