@@ -45,21 +45,6 @@ module Minx
       raise ProcessError if defined?(@fiber)
 
       @fiber = Fiber.new(&@block)
-
-      __resume__
-    end
-
-    # Resume the process.
-    #
-    # This yields execution to the process.
-    #
-    # @private
-    # @raise [ProcessError] if the process has finished
-    def __resume__
-      raise ProcessError if finished?
-
-      $stderr.puts "[#{@fiber.object_id}] Resuming" if Minx.debug?
-      Process.current = self
       @fiber.resume
 
       return self
