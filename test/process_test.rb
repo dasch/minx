@@ -94,9 +94,11 @@ class ProcessTest < Test::Unit::TestCase
         Minx.spawn do
           Minx.yield
           assert_equal :foo, chan.read
+          @bar = :bar
         end
       end
       chan.write(:foo)
+      assert_equal :bar, @bar
     end
   end
 
