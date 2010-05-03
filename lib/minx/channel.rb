@@ -20,22 +20,21 @@ module Minx
     # @raise [ChannelError] when trying to write while asynchronously reading
     # @return [nil]
     def write(message)
-      if @readers.empty?
+      while @readers.empty?
         @writers << Fiber.current
-
-        # Yield control
-        Fiber.yield
-
-        # Yield a message back to a reader.
-        Fiber.yield(message)
-      else
-        reader = @readers.shift
-
-        # Can't write asynchronously to self. That would be silly.
-        raise ChannelError if reader == Fiber.current
-
-        reader.resume(message)
+        if Minx.root?
+          Minx::SCHEDULER.main
+        else
+          Fiber.yield
+        end
       end
+
+      reader = @readers.shift
+
+      # Can't write asynchronously to self. That would be silly.
+      raise ChannelError if reader == Fiber.current
+
+      reader.transfer(message)
 
       return nil
     end
@@ -66,20 +65,14 @@ module Minx
     # @option options [Boolean] :async (false) whether or not to block
     # @return a message
     def read(options = {})
-      if @writers.empty?
-        @readers << Fiber.current
+      @readers << Fiber.current
 
+      if @writers.empty?
         Fiber.yield unless options[:async]
       else
         writer = @writers.shift
 
-        # Save the written message.
-        message = writer.resume
-
-        # Make sure the writer doesn't disappear.
-        writer.resume
-
-        return message
+        writer.transfer
       end
     end
 
