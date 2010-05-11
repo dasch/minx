@@ -73,21 +73,23 @@ class ChannelTest < Test::Unit::TestCase
       input = Minx.channel
       output = Minx.channel
 
-      p1 = Minx.spawn do
+      Minx.spawn do
         input.each do |message|
           output.write(message)
         end
       end
 
-      p2 = Minx.spawn do
+      p1 = Minx.spawn do
         input << 1 << 2 << 3
       end
 
-      p3 = Minx.spawn do
+      p2 = Minx.spawn do
         assert_equal 1, output.read
         assert_equal 2, output.read
         assert_equal 3, output.read
       end
+
+      Minx.join(p1, p2)
     end
   end
 end

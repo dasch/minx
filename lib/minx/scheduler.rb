@@ -4,7 +4,8 @@ module Minx
     def initialize
       @queue = []
       @main = Fiber.new do
-        until @queue.empty?
+        while true
+          Fiber.yield while @queue.empty?
           fiber = @queue.shift
           fiber.transfer if fiber.alive?
         end
@@ -21,8 +22,16 @@ module Minx
     end
 
     def main
-      raise unless Minx.root?
       @main.transfer
+    end
+
+    def enqueue(fiber)
+      @queue << fiber
+    end
+
+    def switch(fiber)
+      @queue << Fiber.current
+      fiber.resume
     end
   end
 end

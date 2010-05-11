@@ -20,20 +20,20 @@ module Minx
     # @raise [ChannelError] when trying to write while asynchronously reading
     # @return [nil]
     def write(message)
-      while @readers.empty?
+      if @readers.empty?
+        debug :write, "no readers, waiting"
         @writers << Fiber.current
-        if Minx.root?
-          Minx::SCHEDULER.main
-        else
-          Fiber.yield
-        end
+
+        debug :write, "got woken up"
+        reader = Fiber.yield
+      else
+        debug :write, "reader waiting, waking him up"
+        reader = @readers.shift
       end
 
-      reader = @readers.shift
+      SCHEDULER.enqueue(Fiber.current)
 
-      # Can't write asynchronously to self. That would be silly.
-      raise ChannelError if reader == Fiber.current
-
+      debug :write, "transferring message #{message.inspect}"
       reader.transfer(message)
 
       return nil
@@ -64,16 +64,20 @@ module Minx
     #
     # @option options [Boolean] :async (false) whether or not to block
     # @return a message
-    def read(options = {})
-      @readers << Fiber.current
-
+    def read
       if @writers.empty?
-        Fiber.yield unless options[:async]
+        debug :read, "no writers, waiting"
+        @readers << Fiber.current
+        message = Fiber.yield
       else
+        debug :read, "writer waiting, waking him up"
         writer = @writers.shift
-
-        writer.transfer
+        message = writer.transfer(Fiber.current)
       end
+
+      debug :read, "received #{message.inspect}"
+
+      return message
     end
 
     # Enumerate over the messages sent to the channel.
@@ -97,6 +101,15 @@ module Minx
     # @return +true+ if you can read a message without blocking
     def readable?
       return !@writers.empty?
+    end
+
+    private
+
+    def debug(method, message)
+      return unless Minx.debug?
+
+      pid = Fiber.current.object_id.to_s(16)
+      puts "[#{pid}] ##{method} - message"
     end
   end
 end

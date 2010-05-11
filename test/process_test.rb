@@ -11,6 +11,10 @@ class ProcessTest < Test::Unit::TestCase
       @process = Minx::Process.new {  @data.replace("foo") }
     end
 
+    teardown do
+      Minx::SCHEDULER.main
+    end
+
     should "not execute initially" do
       assert_equal "", @data
     end
@@ -90,15 +94,13 @@ class ProcessTest < Test::Unit::TestCase
 
     should "be resumed from main process" do
       chan = Minx.channel
-      Minx.spawn do
-        Minx.spawn do
-          Minx.yield
-          assert_equal :foo, chan.read
-          @bar = :bar
-        end
+      p = Minx.spawn do
+        Minx.yield
+        @foo = chan.read
       end
       chan.write(:foo)
-      assert_equal :bar, @bar
+      Minx.join(p)
+      assert_equal :foo, @foo
     end
   end
 
