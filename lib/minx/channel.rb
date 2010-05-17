@@ -25,7 +25,11 @@ module Minx
         @writers << Fiber.current
 
         debug :write, "got woken up"
-        reader = Fiber.yield
+        if Minx.root?
+          reader = SCHEDULER.main while reader.nil?
+        else
+          reader = Fiber.yield
+        end
       else
         debug :write, "reader waiting, waking him up"
         reader = @readers.shift
