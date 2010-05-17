@@ -26,13 +26,14 @@ module Minx
 
         debug :write, "got woken up"
         if Minx.root?
-          reader = SCHEDULER.main while reader.nil?
+          reader = SCHEDULER.main until reader.is_a?(Fiber)
         else
           reader = Fiber.yield
         end
       else
         debug :write, "reader waiting, waking him up"
         reader = @readers.shift
+        reader.transfer(Fiber.current)
       end
 
       SCHEDULER.enqueue(Fiber.current)
@@ -72,7 +73,12 @@ module Minx
       if @writers.empty?
         debug :read, "no writers, waiting"
         @readers << Fiber.current
-        message = Fiber.yield
+        if Minx.root?
+          writer = SCHEDULER.main until writer.is_a?(Fiber)
+        else
+          writer = Fiber.yield
+        end
+        message = writer.transfer
       else
         debug :read, "writer waiting, waking him up"
         writer = @writers.shift

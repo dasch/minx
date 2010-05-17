@@ -102,6 +102,15 @@ class ProcessTest < Test::Unit::TestCase
       Minx.join(p)
       assert_equal :foo, @foo
     end
+
+    should "be resumed from main process (2)" do
+      chan = Minx.channel
+      Minx.spawn do
+        Minx.yield
+        chan.write(:foo)
+      end
+      assert_equal :foo, chan.read
+    end
   end
 
   context "A blocked child process" do
