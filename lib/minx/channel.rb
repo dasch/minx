@@ -26,7 +26,7 @@ module Minx
 
         debug :write, "got woken up"
         if Minx.root?
-          reader = SCHEDULER.main until reader.is_a?(Fiber)
+          reader = SCHEDULER.main while reader.nil?
         else
           reader = Fiber.yield
         end
@@ -74,7 +74,7 @@ module Minx
         debug :read, "no writers, waiting"
         @readers << Fiber.current
         if Minx.root?
-          writer = SCHEDULER.main until writer.is_a?(Fiber)
+          writer = SCHEDULER.main while writer.nil?
         else
           writer = Fiber.yield
         end
