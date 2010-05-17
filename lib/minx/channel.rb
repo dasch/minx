@@ -119,7 +119,7 @@ module Minx
       return unless Minx.debug?
 
       pid = Fiber.current.object_id.to_s(16)
-      puts "[#{pid}] ##{method} - message"
+      puts "[#{pid}] ##{method} - #{message}"
     end
   end
 end
