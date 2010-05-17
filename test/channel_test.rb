@@ -57,15 +57,6 @@ class ChannelTest < Test::Unit::TestCase
       p1 = Minx.spawn { 1.upto(3) {|i| assert_equal(i, @chan.read) } }
       p2 = Minx.spawn { @chan << 1 << 2 << 3 }
     end
-
-    should "not allow writing while asynchronously reading" do
-      assert_raise Minx::ChannelError do
-        Minx.spawn do
-          @chan.read(:async => true)
-          @chan.write("foobar")
-        end
-      end
-    end
   end
 
   context "Forwarding between two channels" do

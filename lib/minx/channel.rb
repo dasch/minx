@@ -33,6 +33,12 @@ module Minx
       else
         debug :write, "reader waiting, waking him up"
         reader = @readers.shift
+
+        until reader.alive?
+          reader = @readers.shift
+          return write(message) if reader.nil?
+        end
+
         reader.transfer(Fiber.current)
       end
 
@@ -88,6 +94,10 @@ module Minx
       debug :read, "received #{message.inspect}"
 
       return message
+    end
+
+    def read_async(callback)
+      @readers << callback
     end
 
     # Enumerate over the messages sent to the channel.

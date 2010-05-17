@@ -66,4 +66,29 @@ class ChoiceTest < Test::Unit::TestCase
       end
     end
   end
+
+  context "Selecting from channels" do
+    should "not screw up the unchosen channel" do
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn { @chan1 << :foo }
+      Minx.spawn { @chan2 << :bar }
+
+      assert_equal :foo, Minx.select(@chan1, @chan2)
+      assert_equal :bar, @chan2.read
+    end
+
+    should "not lose any messages" do
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn { @chan1 << :foo << :bar }
+      Minx.spawn { @chan2 << :baz }
+
+      assert_equal :foo, Minx.select(@chan1, @chan2)
+      assert_equal :bar, @chan1.read
+      assert_equal :baz, @chan2.read
+    end
+  end
 end

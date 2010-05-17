@@ -116,8 +116,15 @@ module Minx
     return if options[:skip]
 
     # ... otherwise, wait for a channel to become readable.
+    current = Fiber.current
+
+    callback = Fiber.new do |writer|
+      message = writer.transfer(Fiber.current)
+      current.resume(message)
+    end
+
     choices.each do |choice|
-      choice.read(:async => true)
+      choice.read_async(callback)
     end
 
     Fiber.yield
