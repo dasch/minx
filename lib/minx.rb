@@ -90,6 +90,24 @@ module Minx
     Minx.yield until processes.all? {|p| p.finished? }
   end
 
+  def self.push(message, *choices)
+    choices.each do |channel|
+      return channel.write(message) if channel.writable?
+    end
+
+    current = Fiber.current
+    callback = Fiber.new do |reader|
+      SCHEDULER.enqueue(current)
+      Fiber.yield(message)
+    end
+
+    choices.each do |choice|
+      choice.write_async(callback)
+    end
+
+    Fiber.yield
+  end
+
   # Select from a list of channels.
   #
   # The channels will be enumerated in order; the first one carrying a message

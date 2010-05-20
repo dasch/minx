@@ -24,12 +24,12 @@ module Minx
         debug :write, "no readers, waiting"
         @writers << Fiber.current
 
-        debug :write, "got woken up"
         if Minx.root?
           reader = SCHEDULER.main while reader.nil?
         else
           reader = Fiber.yield
         end
+        debug :write, "got woken up"
       else
         debug :write, "reader waiting, waking him up"
         reader = @readers.shift
@@ -79,16 +79,23 @@ module Minx
       if @writers.empty?
         debug :read, "no writers, waiting"
         @readers << Fiber.current
-        if Minx.root?
-          writer = SCHEDULER.main while writer.nil?
-        else
-          writer = Fiber.yield
-        end
+
+        writer = SCHEDULER.main while writer.nil?
+
         message = writer.transfer
       else
         debug :read, "writer waiting, waking him up"
+
         writer = @writers.shift
+
+        until writer.alive?
+          writer = @writers.shift
+          return read if writer.nil?
+        end
+
         message = writer.transfer(Fiber.current)
+        SCHEDULER.enqueue(Fiber.current)
+        writer.resume
       end
 
       debug :read, "received #{message.inspect}"
@@ -98,6 +105,10 @@ module Minx
 
     def read_async(callback)
       @readers << callback
+    end
+
+    def write_async(callback)
+      @writers << callback
     end
 
     # Enumerate over the messages sent to the channel.
@@ -121,6 +132,10 @@ module Minx
     # @return +true+ if you can read a message without blocking
     def readable?
       return !@writers.empty?
+    end
+
+    def writable?
+      return !@readers.empty?
     end
 
     private

@@ -91,4 +91,30 @@ class ChoiceTest < Test::Unit::TestCase
       assert_equal :baz, @chan2.read
     end
   end
+
+  context "Writing to a choice of channels" do
+    should "only write to one of them" do
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn { @foo = @chan1.read }
+
+      Minx.push(:foo, @chan1, @chan2)
+
+      assert_equal :foo, @foo
+    end
+
+    should "work regardless of order" do
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn { Minx.push(:foo, @chan1, @chan2) }
+
+      assert_equal :foo, @chan1.read
+
+      Minx.spawn { Minx.push(:bar, @chan1, @chan2) }
+
+      assert_equal :bar, @chan2.read
+    end
+  end
 end
