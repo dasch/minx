@@ -148,3 +148,5 @@ module Minx
     Fiber.yield
   end
 end
+
+END { Minx::SCHEDULER.main }
