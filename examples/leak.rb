@@ -5,7 +5,7 @@ require 'minx'
 
 N = ARGV[0] ? Integer(ARGV[0]) : 100000
 
-N.times { Minx.spawn { Minx.yield } }
+N.times { Minx.spawn { } }
 
 GC.start
 
