@@ -108,7 +108,7 @@ module Minx
     Fiber.yield
   end
 
-  # Select from a list of channels.
+  # Simultaneously read from multiple channels.
   #
   # The channels will be enumerated in order; the first one carrying a message
   # will be picked, and the message will be returned.
@@ -118,11 +118,11 @@ module Minx
   # an option, in which case the call will just return +nil+.
   #
   # @example Non-blocking select
-  #   Minx.select(chan1, chan2, :skip => true)
+  #   Minx.read(chan1, chan2, :skip => true)
   #
   # @param choices [Channel] the channels to be selected among
   # @return the first message read from any of the channels
-  def self.select(*choices)
+  def self.read(*choices)
     options = choices.last.is_a?(Hash) ? choices.pop : {}
 
     # If a choice is readable, just read from that one.

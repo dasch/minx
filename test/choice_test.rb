@@ -15,7 +15,7 @@ class ChoiceTest < Test::Unit::TestCase
 
       should "read from the channel with a writer" do
         Minx.spawn do
-          assert_equal 42, Minx.select(@chan1, @chan2)
+          assert_equal 42, Minx.read(@chan1, @chan2)
         end
       end
     end
@@ -28,13 +28,13 @@ class ChoiceTest < Test::Unit::TestCase
 
       should "read from the first channel specified" do
         Minx.spawn do
-          assert_equal 666, Minx.select(@chan1, @chan2)
+          assert_equal 666, Minx.read(@chan1, @chan2)
         end
       end
 
       should "not read from the second channel specified" do
         Minx.spawn do
-          Minx.select(@chan1, @chan2)
+          Minx.read(@chan1, @chan2)
           assert_equal 42, @chan2.read
         end
       end
@@ -42,7 +42,7 @@ class ChoiceTest < Test::Unit::TestCase
 
     context "with no writers" do
       setup do
-        Minx.spawn { @value = Minx.select(@chan1, @chan2) }
+        Minx.spawn { @value = Minx.read(@chan1, @chan2) }
       end
 
       should "block until a writer comes along" do
@@ -58,7 +58,7 @@ class ChoiceTest < Test::Unit::TestCase
 
     context "with :skip => true" do
       setup do
-        Minx.spawn { @value = Minx.select(@chan1, @chan2, :skip => true) }
+        Minx.spawn { @value = Minx.read(@chan1, @chan2, :skip => true) }
       end
 
       should "not block" do
@@ -75,7 +75,7 @@ class ChoiceTest < Test::Unit::TestCase
       Minx.spawn { @chan1 << :foo }
       Minx.spawn { @chan2 << :bar }
 
-      assert_equal :foo, Minx.select(@chan1, @chan2)
+      assert_equal :foo, Minx.read(@chan1, @chan2)
       assert_equal :bar, @chan2.read
     end
 
@@ -86,7 +86,7 @@ class ChoiceTest < Test::Unit::TestCase
       Minx.spawn { @chan1 << :foo << :bar }
       Minx.spawn { @chan2 << :baz }
 
-      assert_equal :foo, Minx.select(@chan1, @chan2)
+      assert_equal :foo, Minx.read(@chan1, @chan2)
       assert_equal :bar, @chan1.read
       assert_equal :baz, @chan2.read
     end
