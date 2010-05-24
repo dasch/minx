@@ -28,6 +28,17 @@ module Minx
       end
     end
 
+    # Filter messages from +input+.
+    #
+    # Yields messages read from +input+ to the block argument,
+    # forwarding those for which the block returns +true+ to
+    # the +output+ channel.
+    #
+    # @param [Channel] input input channel
+    # @param [Channel] output output channel
+    # @yieldparam message
+    # @raise [ArgumentError] if no block is given
+    # @return [Process] the filtering process
     def filter(input, output)
       unless block_given?
         raise ArgumentError.new("Please provide a block argument")
