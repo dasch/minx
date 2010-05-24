@@ -90,6 +90,14 @@ module Minx
     Minx.yield until processes.all? {|p| p.finished? }
   end
 
+  # Write a message simultaneously to one of a set channels.
+  #
+  # The first channel that is ready to consume a message will
+  # be chosen. If more than one is ready, the first specified
+  # in the argument list is chosen.
+  #
+  # @param message the message to be transmitted
+  # @return [nil]
   def self.write(message, *choices)
     choices.each do |channel|
       return channel.write(message) if channel.writable?
