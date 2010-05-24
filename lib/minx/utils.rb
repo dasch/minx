@@ -1,6 +1,6 @@
 
 module Minx
-  class << self
+  module Utils
 
     # Map messages from +input+ to +output+.
     #
@@ -52,6 +52,7 @@ module Minx
         end
       end
     end
-
   end
+
+  extend Utils
 end
