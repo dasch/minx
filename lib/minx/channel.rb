@@ -40,9 +40,9 @@ module Minx
         end
 
         reader.transfer(Fiber.current)
-      end
 
-      SCHEDULER.enqueue(Fiber.current)
+        SCHEDULER.enqueue(Fiber.current)
+      end
 
       debug :write, "transferring message #{message.inspect}"
       reader.transfer(message)
