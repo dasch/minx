@@ -90,7 +90,7 @@ module Minx
     Minx.yield until processes.all? {|p| p.finished? }
   end
 
-  def self.push(message, *choices)
+  def self.write(message, *choices)
     choices.each do |channel|
       return channel.write(message) if channel.writable?
     end
