@@ -5,6 +5,8 @@ require 'minx'
 require 'rack'
 require 'rack/builder'
 
+CHAN = Minx.channel
+
 class Rack::Minx
   def initialize(app)
     @app = app
@@ -19,6 +21,26 @@ class Rack::Minx
   end
 end
 
-app = Rack::Minx.new(lambda {|env| [200, {}, "Hello, World!\n"] })
+handler = Proc.new do |env|
+  req = Rack::Request.new(env)
+  case req.request_method
+  when 'POST'
+    message = req.params['message']
+
+    if message.nil?
+      [401, {'Content-Type' => 'text/plain'}, "Please specify a message"]
+    end
+
+    puts "Writing message #{message}"
+    CHAN.write(message)
+    puts "Done writing"
+    [200, {'Content-Type' => 'text/plain'}, "Wrote message #{message}"]
+  when 'GET'
+    message = CHAN.read
+    [200, {'Content-Type' => 'text/plain'}, "Read message #{message}"]
+  end
+end
+
+app = Rack::Minx.new(handler)
 
 Rack::Handler::Thin.run(app)
