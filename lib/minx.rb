@@ -98,30 +98,35 @@ module Minx
   #
   # @param message the message to be transmitted
   # @return [nil]
+  def self.push(message, *choices)
+    choices.each do |channel|
+      return channel.write(message) if channel.writable?
+    end
+
+    current = Fiber.current
+    callback = Fiber.new do |reader|
+      Fiber.yield(message)
+      SCHEDULER.enqueue(current)
+    end
+
+    choices.each do |choice|
+      choice.write_async(callback)
+    end
+
+    Fiber.yield
+  end
+
   def self.write(*choices)
     # Allows for both :msg => channel as well as [:msg, channel].
     if choices.size == 1 && choices.first.is_a?(Hash)
       choices = choices.first
     end
 
-    current = Fiber.current
-    choices.each do |message, *channels|
-      callback = Fiber.new do |reader|
-        Fiber.yield(message)
-        SCHEDULER.enqueue(current)
-      end
-
-      if channel = channels.flatten.detect {|c| c.writable? }
-        channel.write(message)
-        next
-      end
-
-      channels.flatten.each do |channel|
-        channel.write_async(callback)
-      end
+    processes = choices.map do |message, channels|
+      Minx.spawn { Minx.push(message, *channels) }
     end
 
-    choices.each { SCHEDULER.main }
+    Minx.join(*processes)
   end
 
   # Simultaneously read from multiple channels.
