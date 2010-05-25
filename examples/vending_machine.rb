@@ -20,7 +20,7 @@ VM = Minx.spawn do
     cokes_left -= cokes
     change = dollars - (cokes * price)
 
-    COKE_TRAY.write(cokes)
-    CHANGE_TRAY.write(change)
+    Minx.join Minx.spawn { COKE_TRAY << cokes },
+              Minx.spawn { CHANGE_TRAY << change }
   end
 end
