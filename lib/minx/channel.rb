@@ -20,10 +20,10 @@ module Minx
     # @raise [ChannelError] when trying to write while asynchronously reading
     # @return [nil]
     def write(message)
+      @writers << Fiber.current
+
       if @readers.empty?
         debug :write, "no readers, waiting"
-        @writers << Fiber.current
-
         if Minx.root?
           reader = SCHEDULER.main while reader.nil?
         else
@@ -80,8 +80,9 @@ module Minx
         debug :read, "no writers, waiting"
         @readers << Fiber.current
 
-        writer = SCHEDULER.main while writer.nil?
+        SCHEDULER.main while @writers.empty?
 
+        writer = @writers.shift
         message = writer.transfer
       else
         debug :read, "writer waiting, waking him up"

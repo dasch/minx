@@ -104,17 +104,16 @@ module Minx
       choices = choices.first
     end
 
-    choices.each do |message, *channels|
-      channels.flatten.each do |channel|
-        return channel.write(message) if channel.writable?
-      end
-    end
-
     current = Fiber.current
     choices.each do |message, *channels|
       callback = Fiber.new do |reader|
-        SCHEDULER.enqueue(current)
         Fiber.yield(message)
+        SCHEDULER.enqueue(current)
+      end
+
+      if channel = channels.flatten.detect {|c| c.writable? }
+        channel.write(message)
+        next
       end
 
       channels.flatten.each do |channel|
@@ -122,7 +121,7 @@ module Minx
       end
     end
 
-    Fiber.yield
+    choices.each { SCHEDULER.main }
   end
 
   # Simultaneously read from multiple channels.

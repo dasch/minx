@@ -136,5 +136,27 @@ class ChoiceTest < Test::Unit::TestCase
       assert_equal 42, @chan1.read
       assert_equal 42, @chan2.read
     end
+
+    should "work repeatedly" do
+      @input = Minx.channel
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn do
+        @input.each do |i|
+          Minx.write([i, @chan1], [i * 2, @chan2])
+        end
+      end
+
+      Minx.spawn { @input << 2 }
+
+      assert_equal 2, @chan1.read
+      assert_equal 4, @chan2.read
+
+      Minx.spawn { @input << 3 }
+
+      assert_equal 3, @chan1.read
+      assert_equal 6, @chan2.read
+    end
   end
 end
