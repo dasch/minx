@@ -98,19 +98,25 @@ module Minx
   #
   # @param message the message to be transmitted
   # @return [nil]
-  def self.write(message, *choices)
-    choices.each do |channel|
-      return channel.write(message) if channel.writable?
+  def self.write(choices)
+    raise ArgumentError unless choices.is_a?(Hash)
+
+    choices.each do |message, *channels|
+      channels.flatten.each do |channel|
+        return channel.write(message) if channel.writable?
+      end
     end
 
     current = Fiber.current
-    callback = Fiber.new do |reader|
-      SCHEDULER.enqueue(current)
-      Fiber.yield(message)
-    end
+    choices.each do |message, *channels|
+      callback = Fiber.new do |reader|
+        SCHEDULER.enqueue(current)
+        Fiber.yield(message)
+      end
 
-    choices.each do |choice|
-      choice.write_async(callback)
+      channels.flatten.each do |channel|
+        channel.write_async(callback)
+      end
     end
 
     Fiber.yield

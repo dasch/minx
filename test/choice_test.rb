@@ -99,7 +99,7 @@ class ChoiceTest < Test::Unit::TestCase
 
       Minx.spawn { @foo = @chan1.read }
 
-      Minx.write(:foo, @chan1, @chan2)
+      Minx.write(:foo => [@chan1, @chan2])
 
       assert_equal :foo, @foo
     end
@@ -108,12 +108,22 @@ class ChoiceTest < Test::Unit::TestCase
       @chan1 = Minx.channel
       @chan2 = Minx.channel
 
-      Minx.spawn { Minx.write(:foo, @chan1, @chan2) }
+      Minx.spawn { Minx.write(:foo => [@chan1, @chan2]) }
 
       assert_equal :foo, @chan1.read
 
-      Minx.spawn { Minx.write(:bar, @chan1, @chan2) }
+      Minx.spawn { Minx.write(:bar => [@chan1, @chan2]) }
 
+      assert_equal :bar, @chan2.read
+    end
+
+    should "allow sending different messages to different channels" do
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn { Minx.write(:foo => @chan1, :bar => @chan2) }
+
+      assert_equal :foo, @chan1.read
       assert_equal :bar, @chan2.read
     end
   end
