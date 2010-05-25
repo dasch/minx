@@ -98,8 +98,11 @@ module Minx
   #
   # @param message the message to be transmitted
   # @return [nil]
-  def self.write(choices)
-    raise ArgumentError unless choices.is_a?(Hash)
+  def self.write(*choices)
+    # Allows for both :msg => channel as well as [:msg, channel].
+    if choices.size == 1 && choices.first.is_a?(Hash)
+      choices = choices.first
+    end
 
     choices.each do |message, *channels|
       channels.flatten.each do |channel|

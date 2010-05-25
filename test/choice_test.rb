@@ -126,5 +126,15 @@ class ChoiceTest < Test::Unit::TestCase
       assert_equal :foo, @chan1.read
       assert_equal :bar, @chan2.read
     end
+
+    should "not screw up when the messages are identical" do
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn { Minx.write([42, @chan1], [42, @chan2]) }
+
+      assert_equal 42, @chan1.read
+      assert_equal 42, @chan2.read
+    end
   end
 end
