@@ -33,4 +33,20 @@ class UtilitiesTest < Test::Unit::TestCase
       assert_equal 18, @chan2.read
     end
   end
+
+  context "A producer process" do
+    should "produce values" do
+      fib = Minx.producer do |chan|
+        i, j = 0, 1
+        loop do
+          chan << i
+          i, j = j, i + j
+        end
+      end
+
+      [0, 1, 1, 2, 3, 5, 8, 13].each do |i|
+        assert_equal i, fib.read
+      end
+    end
+  end
 end

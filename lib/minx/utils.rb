@@ -52,6 +52,29 @@ module Minx
         end
       end
     end
+
+    # Spawn a producer process attached to a channel.
+    #
+    #   fib = Minx.producer do |chan|
+    #     i, j = 0, 1
+    #     loop do
+    #       chan << i
+    #       i, j = j, i + j
+    #     end
+    #   end
+    #
+    #   fib.read  #=> 0
+    #   fib.read  #=> 1
+    #   fib.read  #=> 1
+    #   fib.read  #=> 2
+    #
+    # @yieldparam [Channel] channel the communication channel
+    # @return [Channel] the channel being produced on.
+    def producer(&block)
+      chan = Minx.channel
+      Minx.spawn { block.call(chan) }
+      return chan
+    end
   end
 
   extend Utils
