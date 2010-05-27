@@ -4,7 +4,7 @@ $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'minx'
 
 # Number of rounds.
-M = ARGV[0] ? Integer(ARGV[0]) : 1001
+M = ARGV[0] ? Integer(ARGV[0]) : 1000
 
 # Number of elements.
 N = ARGV[1] ? Integer(ARGV[1]) : 64
@@ -12,26 +12,18 @@ N = ARGV[1] ? Integer(ARGV[1]) : 64
 def node(input, id)
   output = Minx.channel
   Minx.spawn do
-    input.each do |i|
-      #puts "[#{id}] => #{message.inspect}"
-      output.write(i + 1)
-      #puts "[#{id}] DONE"
-    end
+    input.each {|i| output.write(i.succ) }
   end
   return output
 end
 
 FIRST = Minx.channel
-
 LAST = (0...N).inject(FIRST) {|chan, id| node(chan, id) }
 
 i = 0
-
-FIRST.write(i)
-
 M.times do
-  i = LAST.read
   FIRST.write(i)
+  i = LAST.read
 end
 
 puts "Result: #{i}"
