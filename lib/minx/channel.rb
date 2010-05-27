@@ -96,7 +96,7 @@ module Minx
 
         message = writer.transfer(Fiber.current)
         SCHEDULER.enqueue(Fiber.current)
-        writer.resume
+        writer.transfer
       end
 
       debug :read, "received #{message.inspect}"
