@@ -24,6 +24,7 @@ class ChannelTest < Test::Unit::TestCase
       setup do
         @p1.spawn
         @p2.spawn
+        Minx.join(@p1, @p2)
       end
 
       should "be able to transmit a message" do
