@@ -173,7 +173,11 @@ module Minx
     processes.each {|p| p.supervise }
 
     until processes.all? {|p| p.finished? }
-      yield Fiber.yield
+      if root?
+        yield SCHEDULER.main
+      else
+        yield Fiber.yield
+      end
     end
   end
 end

@@ -15,4 +15,12 @@ class SupervisionTest < Test::Unit::TestCase
       assert @p.finished?
     end
   end
+
+  context "A supervisor process" do
+    should "continue after the supervised processes have finished" do
+      @p = Minx.spawn { Minx.yield }
+
+      Minx.supervise(@p) { }
+    end
+  end
 end
