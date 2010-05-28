@@ -52,7 +52,7 @@ module Minx
           if @supervisors.empty?
             raise e
           else
-            @supervisors.each {|s| s.resume(e) }
+            @supervisors.each {|s| s.resume(e, self) }
           end
         end
       end

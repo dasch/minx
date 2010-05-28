@@ -5,13 +5,14 @@ class SupervisionTest < Test::Unit::TestCase
     should "notificy any supervisor in the case of failure" do
       @p = Minx.spawn { Minx.yield; raise Exception.new("This is a TEST") }
       @s = Minx.spawn do
-        Minx.supervise(@p) {|e| @e = e }
+        Minx.supervise(@p) {|e, p| @exc, @proc = e, p }
       end
 
       Minx.join(@p)
 
-      assert_equal Exception, @e.class
-      assert_equal "This is a TEST", @e.message
+      assert_equal Exception, @exc.class
+      assert_equal "This is a TEST", @exc.message
+      assert_equal @p, @proc
       assert @p.finished?
     end
   end
