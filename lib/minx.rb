@@ -169,6 +169,20 @@ module Minx
     Fiber.yield
   end
 
+  def self.read(*channels)
+    results = []
+
+    i = -1
+    ps = channels.map do |chan|
+      i += 1
+      Minx.spawn { results[i] = chan.read }
+    end
+
+    Minx.join(*ps)
+
+    return results
+  end
+
   def self.supervise(*processes)
     processes.each {|p| p.supervise }
 

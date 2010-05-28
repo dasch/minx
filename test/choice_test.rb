@@ -159,4 +159,18 @@ class ChoiceTest < Test::Unit::TestCase
       assert_equal 6, @chan2.read
     end
   end
+
+  context "reading from a set of channels concurrently" do
+    should "work" do
+      @chan1 = Minx.channel
+      @chan2 = Minx.channel
+
+      Minx.spawn { @a, @b = Minx.read(@chan1, @chan2) }
+      @chan1 << :foo
+      @chan2 << :bar
+
+      assert_equal :foo, @a
+      assert_equal :bar, @b
+    end
+  end
 end
