@@ -32,6 +32,7 @@ module Minx
     def initialize(&block)
       raise ArgumentError unless block_given?
 
+      @supervisors = []
       @block = block
     end
 
@@ -44,7 +45,18 @@ module Minx
     def spawn
       raise ProcessError if defined?(@fiber)
 
-      @fiber = Fiber.new(&@block)
+      @fiber = Fiber.new do
+        begin
+          @block.call
+        rescue Exception => e
+          if @supervisors.empty?
+            raise e
+          else
+            @supervisors.each {|s| s.resume(e) }
+          end
+        end
+      end
+
       @fiber.resume
 
       return self
@@ -55,6 +67,10 @@ module Minx
     # @return +true+ if the process has terminated, +false+ otherwise
     def finished?
       !@fiber.alive?
+    end
+
+    def supervise
+      @supervisors << Fiber.current
     end
 
     class << self

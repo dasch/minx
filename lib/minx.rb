@@ -168,6 +168,14 @@ module Minx
 
     Fiber.yield
   end
+
+  def self.supervise(*processes)
+    processes.each {|p| p.supervise }
+
+    until processes.all? {|p| p.finished? }
+      yield Fiber.yield
+    end
+  end
 end
 
 END { Minx::SCHEDULER.main }
