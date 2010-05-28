@@ -143,7 +143,7 @@ module Minx
   #
   # @param choices [Channel] the channels to be selected among
   # @return the first message read from any of the channels
-  def self.read(*choices)
+  def self.select(*choices)
     options = choices.last.is_a?(Hash) ? choices.pop : {}
 
     # If a choice is readable, just read from that one.
