@@ -32,10 +32,12 @@ def worker(cin, cout)
   end
 end
 
+N = ARGV[0] ? Integer(ARGV[0]) : 2000
+
 JOBS    = Minx.channel
 RESULTS = Minx.channel
 
 printer(RESULTS)
 worker(JOBS, RESULTS)
 
-Minx.join(generate(2..2000, JOBS))
+Minx.join(generate(2..N, JOBS))

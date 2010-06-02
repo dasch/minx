@@ -1,6 +1,8 @@
 
 require 'fiber'
 
+N = ARGV[0] ? Integer(ARGV[0]) : 2000
+
 PRINTER = Fiber.new do |i|
   while true
     puts i
@@ -26,6 +28,6 @@ end
 
 WORKER = worker
 
-(2..2000).each do |i|
+(2..N).each do |i|
   WORKER.resume(i)
 end
