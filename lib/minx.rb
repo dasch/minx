@@ -159,7 +159,7 @@ module Minx
     current = Fiber.current
 
     callback = Fiber.new do |writer|
-      message = writer.transfer(Fiber.current)
+      message = writer.transfer
       current.resume(message)
     end
 
