@@ -24,12 +24,7 @@ module Minx
 
       if @readers.empty?
         debug :write, "no readers, waiting"
-        if Minx.root?
-          reader = SCHEDULER.main while reader.nil?
-        else
-          reader = Fiber.yield
-        end
-        debug :write, "got woken up"
+        reader = SCHEDULER.main while reader.nil?
       else
         debug :write, "reader waiting, waking him up"
         reader = @readers.shift
