@@ -165,9 +165,11 @@ class ChoiceTest < Test::Unit::TestCase
       @chan1 = Minx.channel
       @chan2 = Minx.channel
 
-      Minx.spawn { @a, @b = Minx.read(@chan1, @chan2) }
+      p = Minx.spawn { @a, @b = Minx.read(@chan1, @chan2) }
       @chan1 << :foo
       @chan2 << :bar
+
+      Minx.join(p)
 
       assert_equal :foo, @a
       assert_equal :bar, @b
