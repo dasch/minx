@@ -23,10 +23,8 @@ module Minx
       @writers << Fiber.current
 
       if @readers.empty?
-        debug :write, "no readers, waiting"
         reader = SCHEDULER.main while reader.nil?
       else
-        debug :write, "reader waiting, waking him up"
         reader = @readers.shift
 
         until reader.alive?
@@ -39,7 +37,6 @@ module Minx
         SCHEDULER.enqueue(Fiber.current)
       end
 
-      debug :write, "transferring message #{message.inspect}"
       reader.transfer(message)
 
       return nil
@@ -72,7 +69,6 @@ module Minx
     # @return a message
     def read
       if @writers.empty?
-        debug :read, "no writers, waiting"
         @readers << Fiber.current
 
         SCHEDULER.main while @writers.empty?
@@ -80,8 +76,6 @@ module Minx
         writer = @writers.shift
         message = writer.transfer
       else
-        debug :read, "writer waiting, waking him up"
-
         writer = @writers.shift
 
         until writer.alive?
@@ -93,8 +87,6 @@ module Minx
         SCHEDULER.enqueue(Fiber.current)
         writer.transfer
       end
-
-      debug :read, "received #{message.inspect}"
 
       return message
     end
