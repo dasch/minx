@@ -2,7 +2,6 @@
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'minx'
-require 'unprof'
 
 def generate(range, cout)
   Minx.spawn { range.each {|i| cout.write(i) } }
