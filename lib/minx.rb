@@ -52,6 +52,7 @@ module Minx
   # @raise [ArgumentError] unless a block is given
   # @see Process#spawn
   def self.spawn(&block)
+    SCHEDULER.enqueue(Fiber.current)
     Process.new(&block).spawn
   end
 
