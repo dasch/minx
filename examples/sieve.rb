@@ -2,6 +2,7 @@
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'minx'
+require 'unprof'
 
 def generate(range, cout)
   Minx.spawn { range.each {|i| cout.write(i) } }
@@ -38,4 +39,4 @@ RESULTS = Minx.channel
 printer(RESULTS)
 worker(JOBS, RESULTS)
 
-Minx.join(generate(2..800, JOBS))
+Minx.join(generate(2..2000, JOBS))
