@@ -28,7 +28,7 @@ handler = Proc.new do |env|
     message = req.params['message']
 
     if message.nil?
-      [401, {'Content-Type' => 'text/plain'}, "Please specify a message"]
+      return [401, {'Content-Type' => 'text/plain'}, "Please specify a message"]
     end
 
     puts "Writing message #{message}"
