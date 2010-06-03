@@ -2,6 +2,7 @@
 $:.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'minx'
+require 'benchmark'
 
 # Number of rounds.
 M = ARGV[0] ? Integer(ARGV[0]) : 1000
@@ -18,12 +19,15 @@ def node(input, id)
 end
 
 FIRST = Minx.channel
+
 LAST = (0...N).inject(FIRST) {|chan, id| node(chan, id) }
 
-i = 0
-M.times do
-  FIRST.write(i)
-  i = LAST.read
+Benchmark.bm do |bm|
+  bm.report("RING") do
+    i = 0
+    M.times do
+      FIRST.write(i)
+      i = LAST.read
+    end
+  end
 end
-
-puts "Result: #{i}"
