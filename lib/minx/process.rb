@@ -50,7 +50,9 @@ module Minx
           @block.call
         rescue Exception => e
           if @supervisors.empty?
-            raise e
+            $stderr.puts("#{e.class}: #{e.message}")
+            $stderr.puts(e.backtrace)
+            exit(-1) if Minx.abort_on_exception
           else
             @supervisors.each {|s| s.resume(e, self) }
           end

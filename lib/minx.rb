@@ -12,6 +12,8 @@ require 'minx/process'
 require 'minx/scheduler'
 
 module Minx
+  @@abort_on_exception = false
+
   # The root fiber.
   #
   # @private
@@ -23,6 +25,14 @@ module Minx
   # @private
   def self.root?
     ROOT == Fiber.current
+  end
+
+  def self.abort_on_exception
+    @@abort_on_exception
+  end
+
+  def self.abort_on_exception=(val)
+    @@abort_on_exception = val
   end
 
   # Set whether or not to enable debugging output.
