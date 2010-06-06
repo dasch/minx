@@ -183,9 +183,7 @@ module Minx
   def self.read(*channels)
     results = []
 
-    i = -1
-    ps = channels.map do |chan|
-      i += 1
+    ps = channels.each_with_index.map do |chan, i|
       Minx.spawn { results[i] = chan.read }
     end
 
