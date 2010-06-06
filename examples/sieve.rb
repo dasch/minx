@@ -8,7 +8,7 @@ def generate(range, cout)
 end
 
 def printer(cin)
-  Minx.spawn { cin.each {|i| puts i } }
+  Minx.spawn { cin.each {|i| i } }
 end
 
 def worker(cin, cout)
@@ -40,4 +40,6 @@ RESULTS = Minx.channel
 printer(RESULTS)
 worker(JOBS, RESULTS)
 
+start = Time.now
 Minx.join(generate(2..N, JOBS))
+puts (Time.now - start).ceil

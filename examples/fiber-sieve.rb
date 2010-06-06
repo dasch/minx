@@ -5,7 +5,7 @@ N = ARGV[0] ? Integer(ARGV[0]) : 2000
 
 PRINTER = Fiber.new do |i|
   while true
-    puts i
+    #puts i
     i = Fiber.yield
   end
 end
@@ -28,6 +28,8 @@ end
 
 WORKER = worker
 
+start = Time.now
 (2..N).each do |i|
   WORKER.resume(i)
 end
+puts (Time.now - start).ceil
