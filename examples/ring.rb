@@ -12,7 +12,7 @@ N = ARGV[1] ? Integer(ARGV[1]) : 64
 def node(input, id)
   output = Minx.channel
   Minx.spawn do
-    input.each {|i| output.write(i) }
+    input.each {|i| output.write(i.succ) }
   end
   return output
 end
@@ -20,13 +20,14 @@ end
 FIRST = Minx.channel
 
 start = Time.now
-LAST = (0...N).inject(FIRST) {|chan, id| node(chan, id) }
+LAST = (1...N).inject(FIRST) {|chan, id| node(chan, id) }
 puts "Spawned #{N} processes in #{Time.now - start}s"
 
 i = 0
 start = Time.now
 M.times do
-  FIRST.write(i)
-  LAST.read
+  FIRST.write(i.succ)
+  i = LAST.read
 end
+puts " == #{i}"
 puts " => #{Time.now - start}"
