@@ -14,7 +14,6 @@ def worker(queue)
 end
 
 def process_request(client)
-  # Request buffer.
   buffer = ""
   buffer_length = 1024
 
@@ -30,8 +29,6 @@ def process_request(client)
     Minx.yield
     retry
   end while true
-
-  puts buffer
 
   client.puts "200 OK HTTP/1.1"
   client.puts "Content-Type: text/plain"
