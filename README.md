@@ -43,7 +43,7 @@ performant network and file applications.
 Documentation
 -------------
 
-See [the full documentation](http://yardoc.org/docs/dasch-minx/file:README.md).
+See [the full documentation](http://rubydoc.info/github/dasch/minx/master/frames).
 
 
 Copyright
