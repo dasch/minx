@@ -60,12 +60,8 @@ module Minx
     # Read a message off the channel.
     #
     # If no messages have been written to the channel, the calling process will
-    # block, only resuming when a write occurs. This behavior can be suppressed
-    # by calling +read+ with <code>:async => true</code>, in which case the
-    # call will return immediately; the next time the calling process yields,
-    # it may be resumed with a message from the channel.
+    # block, only resuming when a write occurs.
     #
-    # @option options [Boolean] :async (false) whether or not to block
     # @return a message
     def read
       if @writers.empty?
