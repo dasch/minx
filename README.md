@@ -4,7 +4,8 @@ Minx
 Massive and pervasive concurrency with Minx!
 
 Minx uses the powerful concurrency primitives outlined by Tony Hoare in his
-famous book "Communicating Sequential Processes".
+famous book "Communicating Sequential Processes". This library was written
+as part of [my bachelor thesis](http://cl.ly/2E2s471i122S3I1s3W30).
 
 
 Usage
