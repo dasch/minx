@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Minx by dasch</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Minx</h1>
+        <p>A library for creating massively concurrent applications in Ruby</p>
+        <p class="view"><a href="https://github.com/dasch/minx">View the Project on GitHub <small>dasch/minx</small></a></p>
+        <ul>
+          <li><a href="https://github.com/dasch/minx/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/dasch/minx/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/dasch/minx">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p>Massive and pervasive concurrency with Minx!</p>
+
+<p>Minx uses the powerful concurrency primitives outlined by Tony Hoare in his
+famous book "Communicating Sequential Processes". This library was written
+as part of <a href="http://cl.ly/2E2s471i122S3I1s3W30">my bachelor thesis</a>.</p>
+
+<h2>Usage</h2>
+
+<p>Minx lets you easily create concurrent programs using the notion of <em>processes</em>
+and <em>channels</em>.</p>
+
+<div class="highlight">
+<pre><span class="c1"># Very contrived example...</span>
+<span class="n">chan</span> <span class="o">=</span> <span class="no">Minx</span><span class="o">.</span><span class="n">channel</span>
+
+<span class="no">Minx</span><span class="o">.</span><span class="n">spawn</span> <span class="p">{</span> <span class="n">chan</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"Hello, World!"</span><span class="p">)</span> <span class="p">}</span>
+<span class="no">Minx</span><span class="o">.</span><span class="n">spawn</span> <span class="p">{</span> <span class="nb">puts</span> <span class="n">chan</span><span class="o">.</span><span class="n">read</span> <span class="p">}</span>
+</pre>
+</div>
+
+
+<p>These primitives, although simple, are incredibly powerful when composing highly
+concurrent applications. When reading from or writing to a channel, a process
+yields execution -- and thus blocks until another process also participates in
+the communication. An example of when this would be useful is a simple network
+server:</p>
+
+<div class="highlight">
+<pre><span class="c1"># Create a channel for the incoming requests.</span>
+<span class="n">requests</span> <span class="o">=</span> <span class="no">Minx</span><span class="o">.</span><span class="n">channel</span>
+
+<span class="c1"># Spawn 10 workers.</span>
+<span class="mi">10</span><span class="o">.</span><span class="n">times</span> <span class="k">do</span>
+  <span class="no">Minx</span><span class="o">.</span><span class="n">spawn</span> <span class="k">do</span>
+    <span class="n">requests</span><span class="o">.</span><span class="n">each</span> <span class="p">{</span><span class="o">|</span><span class="n">request</span><span class="o">|</span> <span class="n">handle_request</span><span class="p">(</span><span class="n">request</span><span class="p">)</span> <span class="p">}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>In the future, evented IO will be implemented, allowing for highly
+performant network and file applications.</p>
+
+<h2>Documentation</h2>
+
+<p>See <a href="http://rubydoc.info/github/dasch/minx/master/frames">the full documentation</a>.</p>
+
+<h2>Copyright</h2>
+
+<p>Copyright (c) 2010 Daniel Schierbeck (<a href="/dasch" class="user-mention">@dasch</a>).</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/dasch">dasch</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
