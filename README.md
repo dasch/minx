@@ -53,4 +53,4 @@ See [the full documentation](http://rubydoc.info/github/dasch/minx/master/frames
 Copyright
 ---------
 
-Copyright (c) 2010 Daniel Schierbeck. See {file:LICENSE} for details.
+Copyright (c) 2010 Daniel Schierbeck (@dasch). See {file:LICENSE} for details.
